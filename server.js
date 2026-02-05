@@ -11,28 +11,28 @@ const FILE = "data.json";
 
 // GET
 app.get("/api/contacts", (req, res) => {
-
     try {
 
         if (!fs.existsSync(FILE)) {
+            fs.writeFileSync(FILE, "[]");
             return res.json([]);
         }
 
-        const data = fs.readFileSync(FILE, "utf8");
+        let raw = fs.readFileSync(FILE, "utf8").trim();
 
-        if (!data.trim()) {
+        if (!raw) {
+            fs.writeFileSync(FILE, "[]");
             return res.json([]);
         }
 
-        const json = JSON.parse(data);
+        let data = JSON.parse(raw);
 
-        res.json(json);
+        res.json(data);
 
     } catch (err) {
 
-        console.error("JSON ERROR:", err);
+        console.error("JSON BROKEN → RESET", err);
 
-        // Reset file nếu hỏng
         fs.writeFileSync(FILE, "[]");
 
         res.json([]);
@@ -40,34 +40,35 @@ app.get("/api/contacts", (req, res) => {
 });
 
 
+
 // POST
 app.post("/api/contacts", (req, res) => {
-
     try {
 
-        const item = req.body;
-
-        let data = [];
+        let list = [];
 
         if (fs.existsSync(FILE)) {
 
-            const raw = fs.readFileSync(FILE, "utf8");
+            let raw = fs.readFileSync(FILE, "utf8").trim();
 
-            if (raw.trim()) {
-                data = JSON.parse(raw);
+            if (raw) {
+                list = JSON.parse(raw);
             }
         }
 
-        data.push(item);
+        list.push(req.body);
 
-        fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+        fs.writeFileSync(FILE, JSON.stringify(list, null, 2));
 
         res.json({ success: true });
 
     } catch (err) {
 
-        console.error("WRITE ERROR:", err);
+        console.error("WRITE FAIL", err);
+
+        fs.writeFileSync(FILE, "[]");
 
         res.status(500).json({ error: "Server error" });
     }
 });
+
