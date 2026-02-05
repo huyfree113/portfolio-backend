@@ -1,6 +1,6 @@
 const express = require("express");
-const cors = require("cors");
 const fs = require("fs");
+const cors = require("cors");
 
 const app = express();
 
@@ -9,7 +9,7 @@ app.use(express.json());
 
 const FILE = "data.json";
 
-// GET
+// ===== GET =====
 app.get("/api/contacts", (req, res) => {
     try {
 
@@ -31,7 +31,7 @@ app.get("/api/contacts", (req, res) => {
 
     } catch (err) {
 
-        console.error("JSON BROKEN → RESET", err);
+        console.error("RESET JSON:", err);
 
         fs.writeFileSync(FILE, "[]");
 
@@ -40,8 +40,7 @@ app.get("/api/contacts", (req, res) => {
 });
 
 
-
-// POST
+// ===== POST =====
 app.post("/api/contacts", (req, res) => {
     try {
 
@@ -64,7 +63,7 @@ app.post("/api/contacts", (req, res) => {
 
     } catch (err) {
 
-        console.error("WRITE FAIL", err);
+        console.error("WRITE ERROR:", err);
 
         fs.writeFileSync(FILE, "[]");
 
@@ -72,3 +71,10 @@ app.post("/api/contacts", (req, res) => {
     }
 });
 
+
+// ===== PORT =====
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log("Server running on", PORT);
+});
