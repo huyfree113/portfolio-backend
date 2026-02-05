@@ -12,33 +12,62 @@ const FILE = "data.json";
 // GET
 app.get("/api/contacts", (req, res) => {
 
-    if (!fs.existsSync(FILE)) return res.json([]);
+    try {
 
-    const data = fs.readFileSync(FILE);
+        if (!fs.existsSync(FILE)) {
+            return res.json([]);
+        }
 
-    res.json(JSON.parse(data));
+        const data = fs.readFileSync(FILE, "utf8");
+
+        if (!data.trim()) {
+            return res.json([]);
+        }
+
+        const json = JSON.parse(data);
+
+        res.json(json);
+
+    } catch (err) {
+
+        console.error("JSON ERROR:", err);
+
+        // Reset file nếu hỏng
+        fs.writeFileSync(FILE, "[]");
+
+        res.json([]);
+    }
 });
+
 
 // POST
 app.post("/api/contacts", (req, res) => {
 
-    const item = req.body;
+    try {
 
-    let data = [];
+        const item = req.body;
 
-    if (fs.existsSync(FILE)) {
-        data = JSON.parse(fs.readFileSync(FILE));
+        let data = [];
+
+        if (fs.existsSync(FILE)) {
+
+            const raw = fs.readFileSync(FILE, "utf8");
+
+            if (raw.trim()) {
+                data = JSON.parse(raw);
+            }
+        }
+
+        data.push(item);
+
+        fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+
+        res.json({ success: true });
+
+    } catch (err) {
+
+        console.error("WRITE ERROR:", err);
+
+        res.status(500).json({ error: "Server error" });
     }
-
-    data.push(item);
-
-    fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-
-    res.json({ success: true });
-});
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log("Server running on", PORT);
 });
