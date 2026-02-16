@@ -1,1 +1,14 @@
-﻿[]
+[
+  {
+    "name": "test1",
+    "email": "test1@gmail.com",
+    "msg": "zxczzcz",
+    "time": "17:50:40 5/2/2026"
+  },
+  {
+    "name": "test2",
+    "email": "test2@gmail.com",
+    "msg": "zxcxcvxcv",
+    "time": "17:58:10 5/2/2026"
+  }
+]
