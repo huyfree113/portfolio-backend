@@ -75,7 +75,11 @@ app.post("/api/contacts", (req, res) => {
 // ===== PORT =====
 const PORT = process.env.PORT || 3000;
 app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
+  res.json({
+    status: "OK",
+    message: "Contact API is running",
+    endpoints: ["/api/contacts"]
+  });
 });
 
 app.listen(PORT, () => {
